@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- ID 값은 어떤 항목을 선택했는지 구분하기 위해 NaviActivity.kt 에서 사용 -->
+    <item
+        android:id="@+id/DashBoardFragment"
+        android:title="DashBoard"
+        android:icon="@drawable/dashboard" />
+
+    <item
+        android:id="@+id/ReviewFragment"
+        android:title="Review"
+        android:icon="@drawable/testimonial" />
+
+    <item
+        android:id="@+id/MovieFragment"
+        android:title="Movie"
+        android:icon="@drawable/clapper" />
+
+    <item
+        android:id="@+id/MyPageFragment"
+        android:title="My Page"
+        android:icon="@drawable/skills" />
+</menu>

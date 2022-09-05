@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0c0c0c"
+    tools:context=".DashBoardFragment" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_height="30dp"
+        android:text="Hottest A WORD"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+
+    // 좌우 스와이프 대신 화살표 버튼으로 이동할 수 있도록 만들기
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/image_viewpager"
+            android:layout_width="410dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_height="30dp"
+        android:text="Newest A WORD"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/image_viewpager_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:clipToPadding="false"
+            android:clipChildren="false" />
+
+    </LinearLayout>
+
+</LinearLayout>
