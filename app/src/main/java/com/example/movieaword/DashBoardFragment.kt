@@ -1,11 +1,14 @@
 package com.example.movieaword
 
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.DimenRes
 import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -49,6 +52,7 @@ class DashBoardFragment : Fragment() {
         pagerUp.setPageTransformer { page, position ->
             page.translationX = position * offsetPx
         }
+
 
         pagerDown.offscreenPageLimit = 1
 //        pagerDown.clipToPadding = false
