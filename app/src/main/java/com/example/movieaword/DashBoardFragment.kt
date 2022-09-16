@@ -16,8 +16,9 @@ import androidx.viewpager2.widget.ViewPager2
 
 class DashBoardFragment : Fragment() {
 
-    lateinit var pagerUp : ViewPager2
-    lateinit var pagerDown : ViewPager2
+    // ViewPager2에서 ViewPager로 변경했습니다.
+    lateinit var pagerUp : ViewPager
+    lateinit var pagerDown : ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +32,16 @@ class DashBoardFragment : Fragment() {
         var view : View = inflater.inflate(R.layout.fragment_dashboard, container, false)
         // 상단 Hottest Movie A Word의 ViewPager 설정
         pagerUp = view.findViewById(R.id.image_viewpager)
-        pagerUp.adapter = ViewPager2Adapter(getImage())
-        pagerUp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        pagerUp.adapter = ViewPagerAdapter(requireContext(), getImage()) // ViewPager2에서 ViewPager로 변경했습니다. + context를 넘겨줘요
+        // pagerUp.orientation = ViewPager2.ORIENTATION_HORIZONTAL -> ViewPager2가 아닌 ViewPager에서는 더이상 필요하지 않습니다.
 
         // 하단 Newest Movie A Word의 ViewPager 설정
         pagerDown = view.findViewById(R.id.image_viewpager_2)
-        pagerDown.adapter = ViewPager2Adapter(getImage())
-        pagerDown.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        pagerDown.adapter = ViewPagerAdapter(requireContext(), getImage()) // ViewPager2에서 ViewPager로 변경했습니다. + context를 넘겨줘요
+        // pagerDown.orientation = ViewPager2.ORIENTATION_HORIZONTAL -> ViewPager2가 아닌 ViewPager에서는 더이상 필요하지 않습니다.
+
+
+        /* ViewPager2가 아닌 ViewPager에서는 더이상 필요하지 않습니다.
 
         val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)    // dimen 파일 안에 크기를 정의해둠
         val pagerWidth = resources.getDimensionPixelOffset(R.dimen.pageWidth)   // dimen 파일이 없으면 생성
@@ -61,6 +65,7 @@ class DashBoardFragment : Fragment() {
         pagerDown.setPageTransformer { page, position ->
             page.translationX = position * offsetPx
         }
+         */
 
         return view
     }
