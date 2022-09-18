@@ -5,10 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- 포스터간의 간격을 주고 싶다면 margin 값을 조절해주세요. -->
+    <!-- margin값을 주면 포스터의 간격뿐만 아니라 포스터의 크기가 줄어들건데, 정상입니다 -->
+    <!-- 포스터가 차지해야할 공간을 이용해서 간격을 띄우기 때문입니다. -->
+    <!-- ViewPager의 getPageWidth값과 여기의 margin 값을 적절히 조절해 원하는 UI를 구성해주세요 -->
     <ImageView
         android:id="@+id/vp_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
