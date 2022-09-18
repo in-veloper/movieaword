@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 
-// PagerAdapter를 상속받는 Adapter를 새로 만들었습니다.
+// PagerAdapter를 상속받는 Adapter 생성
 class ViewPagerAdapter(private val context: Context, imageList: ArrayList<Int>) : PagerAdapter() {
     var image = imageList
 
@@ -34,8 +34,8 @@ class ViewPagerAdapter(private val context: Context, imageList: ArrayList<Int>) 
         container.removeView(`object` as View)
     }
 
-    // getPageWidth값을 적절히 조절해 포스터의 크기를 정해주세요.
-    // 0f ~ 1f 사이의 값을 사용하시면 됩니다.
+    // getPageWidth값을 조절해 Post의 크기 조절 가능
+    // 0f ~ 1f 사이의 값을 사용
     override fun getPageWidth(position: Int): Float {
         return 0.3f
     }
