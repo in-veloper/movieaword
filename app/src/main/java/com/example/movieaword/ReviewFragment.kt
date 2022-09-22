@@ -1,20 +1,44 @@
 package com.example.movieaword
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import android.widget.Button
+import android.widget.TextView
 import com.example.movieaword.databinding.FragmentReviewBinding
 
 class ReviewFragment : Fragment() {
 
+    val TAG = "ReviewFragment"
+    var db : AppDatabase? = null
+    var movieList = mutableListOf<Movies>()
+
+
+//    lateinit var db: AppDatabase
+    lateinit var applicationContext: Context
     private lateinit var binding : FragmentReviewBinding
-    private lateinit var searchView: SearchView
+//    private lateinit var searchView: SearchView
+//    lateinit var mainActivity: MainActivity
+
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//
+//        mainActivity = context as MainActivity
+//
+////        applicationContext = mainActivity
+//    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        applicationContext = requireContext()
+        db = AppDatabase.getInstance(this)
+// 아래와 같은 방식으로 DB 이용용
+//       db.moviesDao().getAll()
 
 //        binding = FragmentReviewBinding.inflate(layoutInflater)
 
@@ -65,6 +89,19 @@ class ReviewFragment : Fragment() {
 //        binding = FragmentReviewBinding.inflate(inflater, container, false)
 
         var view : View = inflater.inflate(R.layout.fragment_review, container, false)
+        var tv = view.findViewById<TextView>(R.id.edit)
+
+        val savedMovies = db!!.moviesDao()?.getAll()
+        if(savedMovies.isNotEmpty()) {
+            movieList.addAll(savedMovies)
+        }
+        Log.d("movieList", movieList.toString())
+
+        view.findViewById<Button>(R.id.reviewButton).setOnClickListener {view ->
+            Log.d("aa", "aa")
+            val MoviesName = Movies(0, tv.text.toString(), "path")
+            db?.moviesDao()?.insertAll(MoviesName)
+        }
 //        searchView = view.findViewById(R.id.sv) as SearchView
 //
 ////        searchView.setOnSearchClickListener {
@@ -102,4 +139,32 @@ class ReviewFragment : Fragment() {
 
         return view
     }
+
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        setOnClickListener()
+//    }
+//
+//    private fun setOnClickListener() {
+//        val btnSequence = binding.container.children
+//        btnSequence.forEach { btn ->
+//            btn.setOnClickListener(this)
+//        }
+//    }
+//
+//    override fun onClick(v: View?) {
+//        if (v != null) {
+//            when(v.id) {
+//                R.id.reviewButton -> {
+//                    Log.d(TAG, "First Button")
+//                }
+//            }
+//        }
+//    }
+//
+//    companion object {
+//        private const val TAG = "ReviewFragment"
+//        fun instance() = ReviewFragment()
+//    }
 }
