@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.example.movieaword.databinding.FragmentReviewBinding
+import com.kakao.sdk.common.util.Utility
 
 class ReviewFragment : Fragment() {
 
@@ -37,6 +38,7 @@ class ReviewFragment : Fragment() {
         super.onCreate(savedInstanceState)
         applicationContext = requireContext()
         db = AppDatabase.getInstance(this)
+
 // 아래와 같은 방식으로 DB 이용용
 //       db.moviesDao().getAll()
 
@@ -92,8 +94,10 @@ class ReviewFragment : Fragment() {
         var tv = view.findViewById<TextView>(R.id.edit)
 
         val savedMovies = db!!.moviesDao()?.getAll()
-        if(savedMovies.isNotEmpty()) {
-            movieList.addAll(savedMovies)
+        if (savedMovies != null) {
+            if(savedMovies.isNotEmpty()) {
+                movieList.addAll(savedMovies)
+            }
         }
         Log.d("movieList", movieList.toString())
 
