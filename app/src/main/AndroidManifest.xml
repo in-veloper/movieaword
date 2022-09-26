@@ -89,6 +89,8 @@
                     android:scheme="kakao26a79b80c2f28fb0d08db3e6a183993d" />
             </intent-filter>
         </activity>
+        <activity android:name="com.navercorp.nid.oauth.activity.NidOAuthCustomTabActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>
