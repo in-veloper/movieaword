@@ -58,6 +58,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+
     //noinspection GradleCompatible
 //    implementation 'com.android.support:recyclerview-v7:28.0.0'
 //    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
@@ -87,7 +90,6 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
 
     // kakao login
-//    implementation "com.kakao.sdk:v2-user:2.8.6"
     implementation "com.kakao.sdk:v2-user:2.3.0" // 카카오 로그인
     implementation "com.kakao.sdk:v2-talk:2.3.0" // 친구, 메시지(카카오톡)
     implementation "com.kakao.sdk:v2-story:2.3.0" // 카카오스토리

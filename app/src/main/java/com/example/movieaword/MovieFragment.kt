@@ -1,59 +1,147 @@
 package com.example.movieaword
 
+import android.content.Context
+import android.inputmethodservice.InputMethodService
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import androidx.fragment.app.findFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.annotations.SerializedName
+import com.kakao.auth.StringSet.api
+import io.reactivex.internal.operators.observable.ObservableAll
+import okhttp3.FormBody
+import okhttp3.Request
+import org.intellij.lang.annotations.Language
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
+import java.net.URI.create
+import java.net.URL
+import java.net.URLEncoder
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MovieFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MovieFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie, container, false)
+        var view : View = inflater.inflate(R.layout.fragment_movie, container, false)
+
+        var button_search = view.findViewById<Button>(R.id.button_search)
+        var editText = view.findViewById<EditText>(R.id.edit)
+        var recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+
+        button_search.setOnClickListener({
+            if(editText.text.isEmpty()) {
+                return@setOnClickListener
+            }
+
+            recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+            recyclerView.setHasFixedSize(true)
+
+            MoviesRespository.getPopularMovies()
+
+//            recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        })
+
+//        MoviesRespository.getPopularMovies()
+
+        return view
+    }
+}
+
+data class Movie(
+    @SerializedName("id") val id : Long,
+    @SerializedName("title") val title : String,
+    @SerializedName("overview") val overview : String,
+    @SerializedName("poster_path") val poster_path: String
+)
+
+data class GetMoviesResponse(
+    @SerializedName("page") val page: Int,
+    @SerializedName("results") val movies: List<Movie>,
+    @SerializedName("totla_pages") val pages: Int
+)
+
+interface Api {
+
+    @GET("movie/popular")
+    fun getPopularMovies(
+        @Query("api_key") apiKey: String = "93e1795e08fcfc085ac628ed242f4645",
+        @Query("title") title: String = "토이스토리",
+        @Query("page") page : Int,
+        @Query("language") language: String = "ko"
+    ): Call<GetMoviesResponse>
+
+    @GET("movie/top_rated")
+    fun getTopRatedMovies(
+        @Query("api_key") apiKey: String = "93e1795e08fcfc085ac628ed242f4645",
+        @Query("page") page: Int,
+        @Query("language") language: String = "ko"
+    ) : Call<GetMoviesResponse>
+
+    @GET("movie/upcoming")
+    fun getUpcomingMovies(
+        @Query("api_key") apiKey: String = "93e1795e08fcfc085ac628ed242f4645",
+        @Query("page") page : Int,
+        @Query("language") language : String = "ko"
+    ): Call<GetMoviesResponse>
+}
+
+object MoviesRespository {
+    private val api: Api //인터페이스 구현
+
+    init {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.themoviedb.org/3/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        api = retrofit.create(Api::class.java)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MovieFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MovieFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    // add method
+    fun getPopularMovies(page: Int = 1){
+        api.getPopularMovies(page = page)
+            .enqueue(object : Callback<GetMoviesResponse> {
+                override fun onResponse(
+                    call: Call<GetMoviesResponse>,
+                    response: Response<GetMoviesResponse>
+                ) {
+                    if(response.isSuccessful) {
+                        val responseBody = response.body()
+                        if(responseBody != null) {
+                            Log.d("Repository", "Movies: ${responseBody.movies}")
+                        } else {
+                            Log.d("Repository", "Failed to get response")
+                        }
+                    }
                 }
-            }
+
+                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                    Log.e("Repository", "onFailure", t)
+                }
+            })
     }
 }
