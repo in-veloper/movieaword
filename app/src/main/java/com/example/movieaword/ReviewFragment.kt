@@ -37,7 +37,7 @@ class ReviewFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applicationContext = requireContext()
-        db = AppDatabase.getInstance(this)
+        db = AppDatabase.getInstance(requireContext())
 
 // 아래와 같은 방식으로 DB 이용용
 //       db.moviesDao().getAll()
