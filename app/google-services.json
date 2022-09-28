@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "97950187265",
+    "project_id": "movie-a-word",
+    "storage_bucket": "movie-a-word.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97950187265:android:a75a1960dfda26c2d2a500",
+        "android_client_info": {
+          "package_name": "com.example.movieaword"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "97950187265-fqghho61lfa70gatustluei2g4snisv3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhJfJ4HiGgiNamRGfcFvQy_iDjAA2A8RY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "97950187265-fqghho61lfa70gatustluei2g4snisv3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
