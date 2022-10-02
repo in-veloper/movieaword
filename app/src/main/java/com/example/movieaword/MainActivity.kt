@@ -1,125 +1,73 @@
 package com.example.movieaword
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Window
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.movieaword.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
-import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
-import com.kakao.usermgmt.StringSet.email
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.Exception
+import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
 
+    var auth: FirebaseAuth? = null
+    val TAG = "googleLogin"
+    private lateinit var googleSignInClient: GoogleSignInClient
 
+    private lateinit var activityLauncher: ActivityResultLauncher<Intent>
 
-//    private lateinit var binding : ActivityMainBinding
-//    private var TAG = this.javaClass.simpleName
-//
-//    private lateinit var launcher : ActivityResultLauncher<Intent>
-//    private lateinit var firebaseAuth : FirebaseAuth
-//
-//    private var email : String = ""
-//    private var tokenId : String? = null
+    override fun onStart() {
+        super.onStart()
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        account?.let {
+            Toast.makeText(this, "Logged In", Toast.LENGTH_SHORT).show()
+        }?: Toast.makeText(this, "Not yet", Toast.LENGTH_SHORT).show()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 //        binding = ActivityMainBinding.inflate(layoutInflater)
 
+        // Region Start: Google Login
+        setResultSingUp()
+        // Region End: Google Login
+
         setContentView(R.layout.activity_main)
 
-//        firebaseAuth = FirebaseAuth.getInstance()
-//        launcher = registerForActivityResult(
-//            ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
-//                Log.e(TAG, "resultCode : ${result.resultCode}")
-//                Log.e(TAG, "result : $result")
-//
-//                if(result.resultCode == RESULT_OK) {
-//                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//                    try {
-//                        task.getResult(ApiException::class.java)?.let { account ->
-//                            tokenId = account.idToken
-//
-//                            if(tokenId != null && tokenId != "") {
-//                                val credential : AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
-//                                firebaseAuth.signInWithCredential(credential)
-//                                    .addOnCompleteListener {
-//                                        if(firebaseAuth.currentUser != null) {
-//                                            val user : FirebaseUser = firebaseAuth.currentUser!!
-//                                            email = user.email.toString()
-//                                            Log.e(TAG, "email : $email")
-//                                            val googleSignInToken = account.idToken ?: ""
-//
-//                                            if(googleSignInToken != "") {
-//                                                Log.e(TAG, "googleSignInToken : $googleSignInToken")
-//                                            }else{
-//                                                Log.e(TAG, "googleSignInToken이 Null")
-//                                            }
-//                                        }
-//                                    }
-//                            }
-//                        } ?: throw Exception()
-//                    } catch (e : Exception) {
-//                        e.printStackTrace()
-//                    }
-//                }
-//            })
-////
-//        binding.run {
-//            google_login_button.setOnClickListener {
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                        .requestIdToken(getString(R.string.default_web_client_id))
-//                        .requestEmail()
-//                        .build()
-//                    val googleSignInClient = GoogleSignIn.getClient(this@MainActivity, gso)
-//                    val signInIntent : Intent = googleSignInClient.signInIntent
-//                    launcher.launch(signInIntent)
-//                }
-//            }
-//        }
+        // Region Start: Google Login
+        auth = FirebaseAuth.getInstance()
 
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this,gso)
+        google_login_button.setOnClickListener {
+            signIn()
+        }
+        // Region End: Google Login
 
-
-
-
-
-
-
-//        setContentView(R.layout.activity_main)
-
+        // Region Start: Kakao Login
         // 로그인 정보 확인
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
             if (error != null) {
@@ -189,5 +137,89 @@ class MainActivity : AppCompatActivity() {
                 LoginClient.instance.loginWithKakaoAccount(this, callback = callback)
             }
         }
+        // Region End: Kakao Login
     }
+
+    // Region Start: Google Login
+    private fun signIn() {
+        val signInIntent: Intent = googleSignInClient.signInIntent
+        activityLauncher.launch(signInIntent)
+    }
+
+    private fun setResultSingUp() {
+        activityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                result ->
+                if(result.resultCode == Activity.RESULT_OK) {
+                    val task: Task<GoogleSignInAccount> =
+                        GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    handleSignInResult(task)
+                }
+            }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            val email = account?.email.toString()
+            val famailyName = account?.familyName.toString()
+            val givenName = account?.givenName.toString()
+            val displayName = account?.displayName.toString()
+            val photoUrl = account.photoUrl.toString()
+
+            Log.d("로그인한 유저의 이메일", email)
+            Log.d("로그인한 유저의 성", famailyName)
+            Log.d("로그인한 유저의 이름", givenName)
+            Log.d("로그인한 유저의 전체 이름", displayName)
+            Log.d("로그인한 유저의 프로필 사진 주소", photoUrl)
+
+            firebaseAuthWithGoogle(account.idToken!!)
+        } catch (e: ApiException) {
+            Log.w("Failed", "signInResult:Failed code = " + e.statusCode)
+        }
+    }
+
+
+//    private val startForResult =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//            result: ActivityResult ->
+//
+//            if (result.resultCode == RESULT_OK) {
+//                val intent: Intent = result.data!!
+//                val task: Task<GoogleSignInAccount> =
+//                    GoogleSignIn.getSignedInAccountFromIntent(intent)
+//                try {
+//                    val account = task.getResult(ApiException::class.java)!!
+//                    Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+//                    firebaseAuthWithGoogle(account.idToken!!)
+//                } catch (e: ApiException) {
+//                    // Google Sign In failed, update UI appropriately
+//                    Log.w(TAG, "Google sign in failed", e)
+//                    Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth?.signInWithCredential(credential)
+            ?.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "로그인 성공")
+                    val user = auth!!.currentUser
+                    loginSuccess()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                }
+            }
+    }
+
+    private fun loginSuccess(){
+        val intent = Intent(this,NaviActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+    // Region End: Google Login
 }

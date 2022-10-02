@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "97950187265",
-    "project_id": "movie-a-word",
-    "storage_bucket": "movie-a-word.appspot.com"
+    "project_number": "782982867931",
+    "project_id": "movie-a-word-d7a8d",
+    "storage_bucket": "movie-a-word-d7a8d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:97950187265:android:a75a1960dfda26c2d2a500",
+        "mobilesdk_app_id": "1:782982867931:android:4fdadf1de51b5e73ec95fe",
         "android_client_info": {
           "package_name": "com.example.movieaword"
         }
       },
       "oauth_client": [
         {
-          "client_id": "97950187265-fqghho61lfa70gatustluei2g4snisv3.apps.googleusercontent.com",
+          "client_id": "782982867931-44gnmrurjn1s544chh81qb3eve12igsk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movieaword",
+            "certificate_hash": "ed16ddf7499c7bb9333453f24302f02e4c5c1831"
+          }
+        },
+        {
+          "client_id": "782982867931-lqaombh6bhgiftvmnjl336drdagrfkic.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBhJfJ4HiGgiNamRGfcFvQy_iDjAA2A8RY"
+          "current_key": "AIzaSyCHdKamQA02irpMjzUz0OdbGjjaDChRpSU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "97950187265-fqghho61lfa70gatustluei2g4snisv3.apps.googleusercontent.com",
+              "client_id": "782982867931-lqaombh6bhgiftvmnjl336drdagrfkic.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
