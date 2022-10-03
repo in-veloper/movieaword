@@ -10,9 +10,12 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.findFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.kakao.sdk.user.UserApiClient
 
 class MyPageFragment : Fragment() {
+
+    private var mAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +34,17 @@ class MyPageFragment : Fragment() {
         var view : View = inflater.inflate(R.layout.fragment_my_page, container, false)
         val nickname = view.findViewById<TextView>(R.id.nickname)
 
-        UserApiClient.instance.me { user, error ->
-            nickname.text = "닉네임 : ${user?.kakaoAccount?.profile?.nickname}"
+        // Google 로그인의 경우 계정 정보
+        var auth = FirebaseAuth.getInstance()
+
+        // Google로 로그인한 계정 정보가 없을 경우 Kakao 의 경우로 조건 설정
+        if(auth.currentUser == null) {
+            UserApiClient.instance.me { user, error ->
+                nickname.text = "닉네임 : ${user?.kakaoAccount?.profile?.nickname}"
+            }
+        // Google로 로그인한 경우 계정 정보 출력ㅁㄴㅇ
+        }else if(auth.currentUser != null) {
+            nickname.text = "닉네임 : ${auth.currentUser?.displayName.toString()}"
         }
 
         val kakao_logout_button = view.findViewById<Button>(R.id.kakao_logout_button)

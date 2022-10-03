@@ -179,27 +179,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-//    private val startForResult =
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-//            result: ActivityResult ->
-//
-//            if (result.resultCode == RESULT_OK) {
-//                val intent: Intent = result.data!!
-//                val task: Task<GoogleSignInAccount> =
-//                    GoogleSignIn.getSignedInAccountFromIntent(intent)
-//                try {
-//                    val account = task.getResult(ApiException::class.java)!!
-//                    Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-//                    firebaseAuthWithGoogle(account.idToken!!)
-//                } catch (e: ApiException) {
-//                    // Google Sign In failed, update UI appropriately
-//                    Log.w(TAG, "Google sign in failed", e)
-//                    Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth?.signInWithCredential(credential)

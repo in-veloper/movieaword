@@ -6,4 +6,6 @@
     <string name="naver_client_id">RllKMv7Ycmpo1wVPWVAe</string>
     <string name="naver_client_secret">J0V7sK6qjK</string>
     <string name="naver_client_name">네이버 아이디 로그인</string>
+
+    <string name="firebase_client_id">AIzaSyCP1oh9KV1fkhFcbjBYyvZhRXGcAyMoV2c</string>
 </resources>
