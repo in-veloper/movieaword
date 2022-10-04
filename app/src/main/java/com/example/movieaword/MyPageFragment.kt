@@ -14,10 +14,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.navercorp.nid.profile.data.NidProfileResponse
 
 class MyPageFragment : Fragment() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var data : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +47,7 @@ class MyPageFragment : Fragment() {
 
         var view : View = inflater.inflate(R.layout.fragment_my_page, container, false)
         val nickname = view.findViewById<TextView>(R.id.nickname)
+        val naver_logout_button = view.findViewById<Button>(R.id.naver_logout_button)
         val kakao_logout_button = view.findViewById<Button>(R.id.kakao_logout_button)
         val google_logout_button = view.findViewById<Button>(R.id.google_logout_button)
 
@@ -59,6 +65,10 @@ class MyPageFragment : Fragment() {
             nickname.text = "닉네임 : ${auth.currentUser?.displayName.toString()}"
 
             kakao_logout_button.visibility = View.GONE
+        }
+
+        naver_logout_button.setOnClickListener {
+            naverLogOut()
         }
 
         google_logout_button.setOnClickListener {
@@ -106,5 +116,34 @@ class MyPageFragment : Fragment() {
 
         val intent = Intent(activity, MainActivity::class.java)
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+    }
+
+    private fun naverLogOut() {
+        NaverIdLoginSDK.logout()
+        setLayoutState(false)
+        NidOAuthLogin().callDeleteTokenApi(requireContext(), object : OAuthLoginCallback {
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+
+            }
+
+            override fun onError(errorCode: Int, message: String) {
+
+            }
+        })
+
+        val intent = Intent(activity, MainActivity::class.java)
+        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+    }
+
+    private fun setLayoutState(login : Boolean) {
+        if(login) {
+
+        }else{
+
+        }
     }
 }

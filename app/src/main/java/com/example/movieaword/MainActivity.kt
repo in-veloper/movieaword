@@ -5,11 +5,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import com.example.movieaword.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,11 +26,25 @@ import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.navercorp.nid.profile.NidProfileCallback
+import com.navercorp.nid.profile.data.NidProfileResponse
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
 import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     var auth: FirebaseAuth? = null
     val TAG = "googleLogin"
@@ -46,6 +64,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+        val naverClientId = getString(R.string.naver_client_id)
+        val naverClientSecret = getString(R.string.naver_client_secret)
+        val naverClientName = getString(R.string.naver_client_name)
+        NaverIdLoginSDK.initialize(this, naverClientId, naverClientSecret , naverClientName)
+
+        setLayoutState(false)
+
+
+
+
 //        binding = ActivityMainBinding.inflate(layoutInflater)
 
         // Region Start: Google Login
@@ -53,6 +82,12 @@ class MainActivity : AppCompatActivity() {
         // Region End: Google Login
 
         setContentView(R.layout.activity_main)
+
+        val naver_button = findViewById<Button>(R.id.naver_login_button) // 로그인 버튼
+        naver_button.setOnClickListener {
+            startNaverLogin()
+        }
+
 
         // Region Start: Google Login
         auth = FirebaseAuth.getInstance()
@@ -62,6 +97,7 @@ class MainActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this,gso)
+
         google_login_button.setOnClickListener {
             signIn()
         }
@@ -199,4 +235,73 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
     // Region End: Google Login
+
+
+    private fun setLayoutState(login: Boolean){
+//        if(login){
+//            naver_login_button.visibility = View.GONE
+////            binding.tvNaverLogout.visibility = View.VISIBLE
+////            binding.tvNaverDeleteToken.visibility = View.VISIBLE
+//        }else{
+//            naver_login_button.visibility = View.VISIBLE
+////            binding.tvNaverLogout.visibility = View.GONE
+////            binding.tvNaverDeleteToken.visibility = View.GONE
+////            binding.tvResult.text = ""
+//        }
+    }
+    // 네이버 로그인한 정보 받아와서 네이버로 로그인했을시에 로그아웃 버튼 숨김 처리부터 하면 됨
+    private fun startNaverLogin() {
+        var naverToken :String? = ""
+
+        val profileCallback = object : NidProfileCallback<NidProfileResponse> {
+            override fun onSuccess(response: NidProfileResponse) {
+
+//                val MyPageFragment : Fragment = MyPageFragment()
+//                val userEmail = response.profile?.email
+//                val bundle : Bundle = Bundle()
+//                bundle.putString("userEmail", userEmail)
+//                MyPageFragment.arguments = bundle
+
+//                tv_result.text = "id: ${userId} \ntoken: ${naverToken}"
+                setLayoutState(true)
+                Toast.makeText(this@MainActivity, "네이버 아이디 로그인 성공!", Toast.LENGTH_SHORT).show()
+            }
+            override fun onFailure(httpStatus: Int, message: String) {
+                val errorCode = NaverIdLoginSDK.getLastErrorCode().code
+                val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+                Toast.makeText(this@MainActivity, "errorCode: ${errorCode}\n" +
+                        "errorDescription: ${errorDescription}", Toast.LENGTH_SHORT).show()
+            }
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+        }
+
+        /** OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료되는 것을 확인할 수 있습니다. */
+        val oauthLoginCallback = object : OAuthLoginCallback {
+            override fun onSuccess() {
+                // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
+                naverToken = NaverIdLoginSDK.getAccessToken()
+                loginSuccess()
+//                var naverRefreshToken = NaverIdLoginSDK.getRefreshToken()
+//                var naverExpiresAt = NaverIdLoginSDK.getExpiresAt().toString()
+//                var naverTokenType = NaverIdLoginSDK.getTokenType()
+//                var naverState = NaverIdLoginSDK.getState().toString()
+
+                //로그인 유저 정보 가져오기
+                NidOAuthLogin().callProfileApi(profileCallback)
+            }
+            override fun onFailure(httpStatus: Int, message: String) {
+                val errorCode = NaverIdLoginSDK.getLastErrorCode().code
+                val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+                Toast.makeText(this@MainActivity, "errorCode: ${errorCode}\n" +
+                        "errorDescription: ${errorDescription}", Toast.LENGTH_SHORT).show()
+            }
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+        }
+
+        NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
+    }
 }
