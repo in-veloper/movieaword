@@ -9,10 +9,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import com.example.movieaword.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,14 +30,7 @@ import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
-import kotlin.math.log
+import kotlinx.android.synthetic.main.fragment_my_page.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -70,10 +61,6 @@ class MainActivity : AppCompatActivity() {
         val naverClientName = getString(R.string.naver_client_name)
         NaverIdLoginSDK.initialize(this, naverClientId, naverClientSecret , naverClientName)
 
-        setLayoutState(false)
-
-
-
 
 //        binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -83,8 +70,8 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val naver_button = findViewById<Button>(R.id.naver_login_button) // 로그인 버튼
-        naver_button.setOnClickListener {
+        val naver_login_button = findViewById<Button>(R.id.naver_login_button) // 로그인 버튼
+        naver_login_button.setOnClickListener {
             startNaverLogin()
         }
 
@@ -155,7 +142,6 @@ class MainActivity : AppCompatActivity() {
             }
             else if (token != null) {
                 Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
-
                 // Login 성공 시 화면 전환되는 부분
                 // 여기서 그냥 기존 NaviActivity로 연결시켜주면 됨
                 val intent = Intent(this, NaviActivity::class.java)
@@ -236,34 +222,12 @@ class MainActivity : AppCompatActivity() {
     }
     // Region End: Google Login
 
-
-    private fun setLayoutState(login: Boolean){
-//        if(login){
-//            naver_login_button.visibility = View.GONE
-////            binding.tvNaverLogout.visibility = View.VISIBLE
-////            binding.tvNaverDeleteToken.visibility = View.VISIBLE
-//        }else{
-//            naver_login_button.visibility = View.VISIBLE
-////            binding.tvNaverLogout.visibility = View.GONE
-////            binding.tvNaverDeleteToken.visibility = View.GONE
-////            binding.tvResult.text = ""
-//        }
-    }
     // 네이버 로그인한 정보 받아와서 네이버로 로그인했을시에 로그아웃 버튼 숨김 처리부터 하면 됨
     private fun startNaverLogin() {
         var naverToken :String? = ""
-
         val profileCallback = object : NidProfileCallback<NidProfileResponse> {
             override fun onSuccess(response: NidProfileResponse) {
-
-//                val MyPageFragment : Fragment = MyPageFragment()
-//                val userEmail = response.profile?.email
-//                val bundle : Bundle = Bundle()
-//                bundle.putString("userEmail", userEmail)
-//                MyPageFragment.arguments = bundle
-
-//                tv_result.text = "id: ${userId} \ntoken: ${naverToken}"
-                setLayoutState(true)
+                val userId = response.profile?.email
                 Toast.makeText(this@MainActivity, "네이버 아이디 로그인 성공!", Toast.LENGTH_SHORT).show()
             }
             override fun onFailure(httpStatus: Int, message: String) {
@@ -283,13 +247,13 @@ class MainActivity : AppCompatActivity() {
                 // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
                 naverToken = NaverIdLoginSDK.getAccessToken()
                 loginSuccess()
-//                var naverRefreshToken = NaverIdLoginSDK.getRefreshToken()
-//                var naverExpiresAt = NaverIdLoginSDK.getExpiresAt().toString()
-//                var naverTokenType = NaverIdLoginSDK.getTokenType()
-//                var naverState = NaverIdLoginSDK.getState().toString()
+                var naverRefreshToken = NaverIdLoginSDK.getRefreshToken()
+                var naverExpiresAt = NaverIdLoginSDK.getExpiresAt().toString()
+                var naverTokenType = NaverIdLoginSDK.getTokenType()
+                var naverState = NaverIdLoginSDK.getState().toString()
 
                 //로그인 유저 정보 가져오기
-                NidOAuthLogin().callProfileApi(profileCallback)
+                var userInfo = NidOAuthLogin().callProfileApi(profileCallback)
             }
             override fun onFailure(httpStatus: Int, message: String) {
                 val errorCode = NaverIdLoginSDK.getLastErrorCode().code
