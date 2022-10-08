@@ -59,6 +59,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:textStyle="bold"
+        android:textColor="@color/white"
         android:text="네이버 로그인      "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
