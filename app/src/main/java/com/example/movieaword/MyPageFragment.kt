@@ -77,6 +77,10 @@ class MyPageFragment : Fragment() {
         kakao_unlink_button = view.findViewById<Button>(R.id.kakao_unlink_button)
         google_unlink_button = view.findViewById<Button>(R.id.google_unlink_button)
 
+
+        google_unlink_button.setOnClickListener {
+            revokeAccess()
+        }
         // Google 로그인의 경우 계정 정보
         var auth = FirebaseAuth.getInstance()
 
@@ -84,9 +88,8 @@ class MyPageFragment : Fragment() {
         if(auth.currentUser == null && !isNaver) {
             UserApiClient.instance.me { user, error ->
                 nickname.text = "평론가 : ${user?.kakaoAccount?.profile?.nickname}"
-                setLayoutState("Kakao")
             }
-//            google_logout_button.visibility = View.GONE
+            setLayoutState("Kakao")
         // Google로 로그인한 경우 계정 정보 출력
         }else if(auth.currentUser != null && !isNaver) {
             nickname.text = "평론가 : ${auth.currentUser?.displayName.toString()}"
@@ -94,6 +97,7 @@ class MyPageFragment : Fragment() {
         }
 
         if(isNaver) {
+            setLayoutState("Naver")
             val oAuthLoginCallback = object : OAuthLoginCallback {
                 override fun onSuccess() {
                     // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
@@ -108,7 +112,6 @@ class MyPageFragment : Fragment() {
                             Log.e(TAG, "네이버 로그인한 유저 정보 - 이메일 : $email")
                             Log.e(TAG, "네이버 로그인한 유저 정보 - 성별 : $gender")
                             isNaver = true
-                            setLayoutState("Naver")
                         }
 
                         override fun onError(errorCode: Int, message: String) {
@@ -250,5 +253,27 @@ class MyPageFragment : Fragment() {
                 onFailure(errorCode, message)
             }
         })
+    }
+
+    private fun revokeAccess() {
+        FirebaseAuth.getInstance().currentUser!!.delete()
+        FirebaseAuth.getInstance().signOut()
+        googleSignInClient.revokeAccess().addOnCompleteListener(requireActivity()) {
+
+        }
+        val intent = Intent(activity, MainActivity::class.java)
+        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+//        FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
+//            task ->
+//            if(task.isSuccessful) {
+//                Toast.makeText(requireContext(), "구글 아이디 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
+//                FirebaseAuth.getInstance().signOut()
+//
+//                val intent = Intent(activity, MainActivity::class.java)
+//                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+//            }else{
+//                Toast.makeText(requireContext(), task.exception.toString(), Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 }

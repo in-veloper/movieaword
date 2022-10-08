@@ -5,9 +5,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -43,13 +46,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var activityLauncher: ActivityResultLauncher<Intent>
 
-    override fun onStart() {
-        super.onStart()
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        account?.let {
-            Toast.makeText(this, "Logged In", Toast.LENGTH_SHORT).show()
-        }?: Toast.makeText(this, "Not yet", Toast.LENGTH_SHORT).show()
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        val account = GoogleSignIn.getLastSignedInAccount(this)
+//        account?.let {
+//            Toast.makeText(this, "Logged In", Toast.LENGTH_SHORT).show()
+//        }?: Toast.makeText(this, "Not yet", Toast.LENGTH_SHORT).show()
+//    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val naver_login_button = findViewById<Button>(R.id.naver_login_button) // 로그인 버튼
+        val naver_login_button = findViewById<TextView>(R.id.naver_login_button) // 로그인 버튼
         naver_login_button.setOnClickListener {
             startNaverLogin()
         }
@@ -84,6 +87,10 @@ class MainActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this,gso)
+
+        val google_login_button = findViewById<SignInButton>(R.id.google_login_button)
+
+        setGoogleButtonText(google_login_button, "Google 로그인       ")
 
         google_login_button.setOnClickListener {
             signIn()
@@ -267,5 +274,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
+    }
+
+    private fun setGoogleButtonText(loginButton: SignInButton, buttonText: String) {
+        var i = 0
+        while (i < loginButton.childCount) {
+            var v = loginButton.getChildAt(i)
+            if(v is TextView) {
+                var tv = v
+                tv.setText(buttonText)
+                tv.setGravity(Gravity.CENTER)
+                return
+            }
+            i++
+        }
     }
 }
