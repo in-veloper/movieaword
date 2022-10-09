@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.annotations.SerializedName
 import com.kakao.auth.StringSet.api
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.clientId
 import io.reactivex.internal.operators.observable.ObservableAll
 import okhttp3.FormBody
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.intellij.lang.annotations.Language
 import retrofit2.Call
@@ -35,6 +37,8 @@ import java.net.URLEncoder
 import java.util.*
 
 class MovieFragment : Fragment() {
+    //
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,19 +55,22 @@ class MovieFragment : Fragment() {
         var editText = view.findViewById<EditText>(R.id.edit)
         var recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
 
-        button_search.setOnClickListener({
-            if(editText.text.isEmpty()) {
+        button_search.setOnClickListener {
+            if (editText.text.isEmpty()) {
                 return@setOnClickListener
             }
 
-            recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            recyclerView.layoutManager =
+                LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
 
             recyclerView.setHasFixedSize(true)
 
-            MoviesRespository.getPopularMovies()
+//            MoviesRespository.getPopularMovies()
+
+
 
 //            recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        })
+        }
 
 //        MoviesRespository.getPopularMovies()
 
@@ -144,5 +151,4 @@ object MoviesRespository {
                 }
             })
     }
-
 }

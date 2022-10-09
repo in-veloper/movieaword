@@ -23,11 +23,29 @@
     android:gravity="bottom"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/main_image_icon"
+        android:text="오직 한 문장으로 영화의 감동을 전할 수 있다면 \n당신도 영화 평론가!!" />
+
+    <ImageView
+        android:id="@+id/main_image_icon"
+        android:layout_width="360dp"
+        android:layout_height="400dp"
+        android:layout_gravity="center"
+        android:src="@drawable/luncher_movie_foreground" />
+
     <ImageButton
         android:id="@+id/kakao_login_button"
-        android:layout_width="match_parent"
+        android:layout_width="307dp"
+        android:layout_marginLeft="53dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="#00ff0000"
         android:src="@drawable/kakao_login_medium_wide"
         app:layout_constraintBottom_toTopOf="@+id/google_login_button"
         app:layout_constraintLeft_toLeftOf="parent"
